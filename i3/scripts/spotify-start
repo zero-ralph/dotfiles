@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Start spotify (if needed) and put its window on workspace 5 ($ws5 in the
+# i3 config) without switching to it.
+#   spotify-start          start it / move it to workspace 5
+#   spotify-start --focus  same, then jump to it
+
+ws5=$(grep -oP '^set \$ws5 "\K[^"]+' ~/.config/i3/config)
+ws5=${ws5:-5}
+
+has_window() { i3-msg -t get_tree | grep -q '"class":"Spotify"'; }
+
+pgrep -x spotify >/dev/null || spotify >/dev/null 2>&1 &
+
+# spotify maps its window before setting the class, so wait for it
+for _ in $(seq 1 60); do
+    has_window && break
+    sleep 0.5
+done
+
+i3-msg -q "[class=\"Spotify\"] move container to workspace \"$ws5\""
+i3-msg -q '[class="Spotify"] floating disable'
+[ "$1" = "--focus" ] && i3-msg -q '[class="Spotify"] focus'
+exit 0

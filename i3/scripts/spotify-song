@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Spacer block that also shows the current spotify song while playing.
+# min_width stays fixed at $SPACER so the spotify buttons stay centered.
+
+SPACER=${SPACER:-0}
+# rough char budget so the title fits inside the spacer (~14px per char)
+max=$(( SPACER > 0 ? SPACER / 14 : 40 ))
+
+text=" "
+if [ "$(playerctl -p spotify status 2>/dev/null)" = "Playing" ]; then
+    song=$(playerctl -p spotify metadata --format '{{artist}} - {{title}}' 2>/dev/null)
+    [ ${#song} -gt $max ] && song="${song:0:$((max - 1))}…"
+    # escape for pango markup, then for json
+    song=$(printf '%s' "$song" | sed -e 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' -e 's/\\/\\\\/g; s/"/\\"/g')
+    text=" $song"
+fi
+
+printf '{"full_text":"%s","min_width":%d,"align":"left"}\n' "$text" "$SPACER"

@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+# i3bar workspace_command: always show workspaces 1-10 on this bar, including
+# ones that aren't open yet (clicking those creates them on their assigned
+# monitor). Names/icons come from the `set $wsN "..."` lines in the i3 config.
+# Usage: all-workspaces <output name>
+import json, os, re, subprocess, sys
+
+output = sys.argv[1]
+with open(os.path.expanduser("~/.config/i3/config"), encoding="utf-8") as f:
+    names = {int(n): v for n, v in re.findall(r'^set \$ws(\d+) "([^"]*)"', f.read(), re.M)}
+
+def show():
+    open_ws = {w["num"]: w for w in json.loads(subprocess.check_output(["i3-msg", "-t", "get_workspaces"]))}
+    bar = []
+    for num in range(1, 11):
+        w = open_ws.pop(num, None) or {
+            "num": num, "name": names.get(num, str(num)), "visible": False,
+            "focused": False, "urgent": False,
+            "rect": {"x": 0, "y": 0, "width": 0, "height": 0},
+        }
+        bar.append(w)
+    bar += sorted(open_ws.values(), key=lambda w: w["num"])  # any extra workspaces
+    for w in bar:
+        w["output"] = output
+    print(json.dumps(bar), flush=True)
+
+show()
+events = subprocess.Popen(["i3-msg", "-t", "subscribe", "-m", '["workspace","output"]'],
+                          stdout=subprocess.PIPE, text=True)
+for _ in events.stdout:
+    show()

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Spotify play/pause block. On click it toggles playback, starting spotify
+# on workspace 5 first if it isn't running.
+
+if [ -n "$button" ]; then
+    if ! playerctl -p spotify status >/dev/null 2>&1; then
+        ~/.config/i3/scripts/spotify-start
+        # wait for spotify to register with playerctl
+        for _ in $(seq 1 40); do
+            playerctl -p spotify status >/dev/null 2>&1 && break
+            sleep 0.5
+        done
+        sleep 1
+        playerctl -p spotify play
+    else
+        playerctl -p spotify play-pause
+    fi
+    sleep 0.2
+    pkill -RTMIN+10 i3blocks
+fi
+
+if [ "$(playerctl -p spotify status 2>/dev/null)" = "Playing" ]; then
+    echo $'  '
+else
+    echo $'  '
+fi
