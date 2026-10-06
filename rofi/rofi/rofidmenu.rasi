@@ -1,0 +1,129 @@
+/*******************************************************
+ * ROFI i3 apps menu - dark + orange theme
+ * Styled after the Archcraft i3 launcher: search bar,
+ * two-column list and Apps/Run/Files/Windows tabs.
+ *******************************************************/
+configuration {
+    font:                "DejaVu Sans Mono, FontAwesome 11";
+    show-icons:          false;
+    display-drun:        "  Apps";
+    display-run:         "  Run";
+    display-filebrowser: "  Files";
+    display-window:      "  Windows";
+    drun-display-format: "{name}";
+    window-format:       "{w} · {c} · {t}";
+    scroll-method:       0;
+    disable-history:     false;
+    hover-select:        true;
+    me-select-entry:     "";
+    me-accept-entry:     "MousePrimary";
+}
+
+* {
+    bg:        #1b1e25;
+    surface:   #262a33;
+    surface2:  #323743;
+    fg:        #d4d7dd;
+    muted:     #7a808c;
+    accent:    #ff8c52;
+    red:       #e06c75;
+
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    width:            640px;
+    border:           2px;
+    border-color:     @accent;
+    border-radius:    0px;
+    background-color: @bg;
+    location:         center;
+}
+
+mainbox {
+    spacing:  14px;
+    padding:  20px;
+    children: [ inputbar, listview, mode-switcher ];
+}
+
+inputbar {
+    spacing:  12px;
+    children: [ textbox-search, entry ];
+}
+textbox-search {
+    expand:           false;
+    str:              "";
+    font:             "FontAwesome 12";
+    padding:          7px 9px;
+    border-radius:    6px;
+    background-color: @accent;
+    text-color:       @bg;
+    vertical-align:   0.5;
+}
+entry {
+    placeholder:       "Search...";
+    placeholder-color: @muted;
+    text-color:        #ffffff;
+    cursor-color:      #ffffff;
+    vertical-align:    0.5;
+}
+
+listview {
+    columns:      2;
+    lines:        8;
+    spacing:      6px;
+    fixed-height: true;
+    scrollbar:    false;
+}
+element {
+    padding:       7px 8px;
+    border-radius: 6px;
+}
+element normal.normal, element alternate.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+element normal.active, element alternate.active {
+    text-color: @accent;
+}
+element normal.urgent, element alternate.urgent {
+    text-color: @red;
+}
+element selected.normal, element selected.active {
+    background-color: @accent;
+    text-color:       @bg;
+}
+element selected.urgent {
+    background-color: @red;
+    text-color:       @bg;
+}
+element-text {
+    background-color: inherit;
+    text-color:       inherit;
+    vertical-align:   0.5;
+}
+
+mode-switcher {
+    spacing: 10px;
+}
+button {
+    padding:          8px;
+    border-radius:    6px;
+    background-color: @surface;
+    text-color:       @muted;
+    cursor:           pointer;
+}
+button selected {
+    background-color: @accent;
+    text-color:       @bg;
+}
+
+message {
+    padding:          8px;
+    border-radius:    6px;
+    background-color: @surface;
+}
+textbox {
+    text-color: @fg;
+}
